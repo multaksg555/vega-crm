@@ -5,9 +5,8 @@
     "buildCommand": "pip install fastapi uvicorn"
   },
   "deploy": {
-    "startCommand": "python absolute_simple_server.py",
+    "startCommand": "python ultra_simple.py",
     "healthcheckPath": "/api/health",
-    "healthcheckTimeout": 30,
-    "restartPolicyType": "ON_FAILURE"
+    "healthcheckTimeout": 10
   }
 }
