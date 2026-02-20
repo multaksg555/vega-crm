@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vega CRM - Демонстрация</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #3498db 0%, #2c3e50 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .server-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-bottom: 2px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #2ecc71;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .content {
+            padding: 30px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border: 1px solid #e9ecef;
+        }
+        
+        .section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .object-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .object-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            border-left: 4px solid #3498db;
+            transition: transform 0.2s;
+        }
+        
+        .object-card:hover {
+            transform: translateX(5px);
+            background: #e3f2fd;
+        }
+        
+        .object-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .object-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: #2c3e50;
+        }
+        
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .status-planning { background: #f1c40f; color: #000; }
+        .status-in_progress { background: #3498db; color: white; }
+        .status-completed { background: #2ecc71; color: white; }
+        
+        .object-details {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .gantt-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .gantt-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            position: relative;
+        }
+        
+        .gantt-progress {
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .api-endpoints {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .endpoint {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            border-left: 3px solid #3498db;
+        }
+        
+        .method-get { color: #2ecc71; }
+        .method-post { color: #3498db; }
+        
+        footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+            border-radius: 0 0 20px 20px;
+        }
+        
+        .timestamp {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            margin-top: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 Vega CRM</h1>
+            <div class="subtitle">Система контроля объектов по зачистке резервуаров</div>
+        </header>
+        
+        <div class="server-info">
+            <div class="status">
+                <div class="status-dot"></div>
+                <span>Сервер работает</span>
+            </div>
+            <div class="timestamp" id="timestamp">Загрузка...</div>
+        </div>
+        
+        <div class="content">
+            <div class="section">
+                <h2>📋 Объекты в работе</h2>
+                <div class="object-list" id="objects-list">
+                    <!-- Объекты будут загружены через JavaScript -->
+                    <div class="loading">Загрузка объектов...</div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>📊 Диаграмма Ганта</h2>
+                <div class="gantt-chart" id="gantt-chart">
+                    <!-- Диаграмма Ганта будет загружена через JavaScript -->
+                    <div class="loading">Загрузка данных...</div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>📈 Статистика</h2>
+                <div class="stats-grid" id="stats-grid">
+                    <!-- Статистика будет загружена через JavaScript -->
+                    <div class="loading">Загрузка статистики...</div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>🔧 API Endpoints</h2>
+                <div class="api-endpoints">
+                    <div class="endpoint">
+                        <span class="method-get">GET</span> /api/health - Проверка здоровья сервера
+                    </div>
+                    <div class="endpoint">
+                        <span class="method-get">GET</span> /api/objects - Все объекты
+                    </div>
+                    <div class="endpoint">
+                        <span class="method-get">GET</span> /api/gantt - Данные для диаграммы Ганта
+                    </div>
+                    <div class="endpoint">
+                        <span class="method-get">GET</span> /api/stats - Статистика
+                    </div>
+                    <div class="endpoint">
+                        <span class="method-post">POST</span> /api/objects - Создать новый объект
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <div>Vega CRM - Разработано для компании "Вега"</div>
+            <div class="timestamp">FastAPI + SQLite + React (в разработке)</div>
+        </footer>
+    </div>
+
+    <script>
+        // Базовый URL API
+        const API_BASE = 'http://localhost:8000/api';
+        
+        // Функция для форматирования даты
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('ru-RU', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+        }
+        
+        // Функция для обновления timestamp
+        function updateTimestamp() {
+            const now = new Date();
+            document.getElementById('timestamp').textContent = 
+                `Обновлено: ${now.toLocaleTimeString('ru-RU')}`;
+        }
+        
+        // Функция для загрузки объектов
+        async function loadObjects() {
+            try {
+                const response = await fetch(`${API_BASE}/objects`);
+                const objects = await response.json();
+                
+                const container = document.getElementById('objects-list');
+                container.innerHTML = '';
+                
+                objects.forEach(obj => {
+                    const statusClass = `status-${obj.status}`;
+                    const statusText = {
+                        'planning': 'Планирование',
+                        'in_progress': 'В работе',
+                        'completed': 'Завершён'
+                    }[obj.status] || obj.status;
+                    
+                    const card = document.createElement('div');
+                    card.className = 'object-card';
+                    card.innerHTML = `
+                        <div class="object-header">
+                            <div class="object-name">${obj.name}</div>
+                            <div class="status-badge ${statusClass}">${statusText}</div>
+                        </div>
+                        <div class="object-details">
+                            <div><strong>Клиент:</strong> ${obj.client_name}</div>
+                            <div><strong>Место:</strong> ${obj.location}</div>
+                            <div><strong>Создан:</strong> ${formatDate(obj.created_at)}</div>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Ошибка загрузки объектов:', error);
+                document.getElementById('objects-list').innerHTML = 
+                    '<div class="error">Ошибка загрузки объектов</div>';
+            }
+        }
+        
+        // Функция для загрузки диаграммы Ганта
+        async function loadGantt() {
+            try {
+                const response = await fetch(`${API_BASE}/gantt`);
+                const ganttData = await response.json();
+                
+                const container = document.getElementById('gantt-chart');
+                container.innerHTML = '';
+                
+                ganttData.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'gantt-item';
+                    card.innerHTML = `
+                        <div class="object-header">
+                            <div class="object-name">${item.task}</div>
+                            <div class="status-badge">${item.progress}%</div>
+                        </div>
+                        <div class="object-details">
+                            <div><strong>Начало:</strong> ${item.start}</div>
+                            <div><strong>Окончание:</strong> ${item.end}</div>
+                        </div>
+                        <div class="gantt-progress">
+                            <div class="progress-bar" style="width: ${item.progress}%; background: ${item.color};"></div>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Ошибка загрузки диаграммы Ганта:', error);
+                document.getElementById('gantt-chart').innerHTML = 
+                    '<div class="error">Ошибка загрузки диаграммы Ганта</div>';
+            }
+        }
+        
+        // Функция для загрузки статистики
+        async function loadStats() {
+            try {
+                const response = await fetch(`${API_BASE}/stats`);
+                const stats = await response.json();
+                
+                const container = document.getElementById('stats-grid');
+                container.innerHTML = '';
+                
+                const statsCards = [
+                    { label: 'Всего объектов', value: stats.total_objects, color: '#3498db' },
+                    { label: 'Завершено', value: stats.completed, color: '#2ecc71' },
+                    { label: 'В работе', value: stats.in_progress, color: '#f39c12' },
+                    { label: 'Процент завершения', value: `${stats.completion_rate}%`, color: '#9b59b6' }
+                ];
+                
+                statsCards.forEach(stat => {
+                    const card = document.createElement('div');
+                    card.className = 'stat-card';
+                    card.style.background = `linear-gradient(135deg, ${stat.color} 0%, ${stat.color}80 100%)`;
+                    card.innerHTML = `
+                        <div class="stat-value">${stat.value}</div>
+                        <div class="stat-label">${stat.label}</div>
+                    `;
+                    container.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Ошибка загрузки статистики:', error);
+                document.getElementById('stats-grid').innerHTML = 
+                    '<div class="error">Ошибка загрузки статистики</div>';
+            }
+        }
+        
+        // Функция для проверки здоровья сервера
+        async function checkHealth() {
+            try {
+                const response = await fetch(`${API_BASE}/health`);
+                const health = await response.json();
+                console.log('Сервер здоров:', health);
+                return true;
+            } catch (error) {
+                console.error('Сервер не отвечает:', error);
+                return false;
+            }
+        }
+        
+        // Основная функция инициализации
+        async function init() {
+            updateTimestamp();
+            
+            // Проверяем здоровье сервера
+            const isHealthy = await checkHealth();
+            if (!isHealthy) {
+                alert('Сервер не отвечает. Убедитесь что сервер запущен на localhost:8000');
+                return;
+            }
+            
+            // Загружаем все данные
+            await Promise.all([
+                loadObjects(),
+                loadGantt(),
+                loadStats()
+            ]);
+            
+            // Обновляем timestamp каждую минуту
+            setInterval(updateTimestamp, 60000);
+            
+            // Обновляем данные каждые 30 секунд
+            setInterval(async () => {
+                await loadObjects();
+                await loadGantt();
+                await loadStats();
+                updateTimestamp();
+            }, 30000);
+        }
+        
+        // Запускаем приложение при загрузке страницы
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
