@@ -5,10 +5,8 @@
     "buildCommand": "pip install fastapi uvicorn[standard]"
   },
   "deploy": {
-    "startCommand": "python bulletproof_server.py",
+    "startCommand": "python hello_railway.py",
     "healthcheckPath": "/api/health",
-    "healthcheckTimeout": 30,
-    "restartPolicyType": "ON_FAILURE",
-    "numReplicas": 1
+    "healthcheckTimeout": 30
   }
 }
